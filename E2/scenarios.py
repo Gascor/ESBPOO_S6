@@ -128,6 +128,49 @@ class Gallery:
     def welcome_client(self, client: ArtClient) -> None:
         self.clients.append(client)
 
+
+# scenario 6 : bateau, cabines, roles
+@dataclass
+class Person:
+    name: str
+
+
+@dataclass
+class Passenger(Person):
+    activities: List[str] = field(default_factory=list)
+
+
+@dataclass
+class Guide(Person):
+    def explain_visit(self, passenger: Passenger, subject: str) -> str:
+        return f"{self.name} explique {subject} a {passenger.name}."
+
+
+@dataclass
+class Animator(Person):
+    def animate(self, passenger: Passenger, activity: str) -> str:
+        passenger.activities.append(activity)
+        return f"{self.name} anime {activity} pour {passenger.name}."
+
+
+@dataclass
+class Cabin:
+    label: str
+    occupants: List[Person] = field(default_factory=list)
+
+    def add_person(self, person: Person) -> None:
+        self.occupants.append(person)
+
+
+@dataclass
+class Boat:
+    name: str
+    cabins: List[Cabin] = field(default_factory=list)
+
+    def add_cabin(self, cabin: Cabin) -> None:
+        self.cabins.append(cabin)
+
+
 if __name__ == "__main__":
     # scenario 1
     france = Country("France")
@@ -172,3 +215,16 @@ if __name__ == "__main__":
     galerie.welcome_client(acheteur)
     acheteur.buy(oeuvre)
     print("Ventes de Bob:", [a.title for a in acheteur.purchases])
+
+    # scenario 6
+    bateau = Boat("Odyssee")
+    cabine_a = Cabin("A")
+    guide = Guide("Lucie")
+    animateur = Animator("Sam")
+    passager = Passenger("Chloe")
+    cabine_a.add_person(guide)
+    cabine_a.add_person(animateur)
+    cabine_a.add_person(passager)
+    bateau.add_cabin(cabine_a)
+    print(guide.explain_visit(passager, "la baie"))
+    print(animateur.animate(passager, "karaoke"))
