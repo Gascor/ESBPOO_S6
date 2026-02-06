@@ -15,6 +15,20 @@ class Country:
         other.neighbors.add(self.name)
 
 
+# scenario 2 : polygone et points
+@dataclass(frozen=True)
+class Point:
+    x: float
+    y: float
+
+
+@dataclass
+class Polygon:
+    points: List[Point]
+
+    def add_point(self, point: Point) -> None:
+        self.points.append(point)
+
 if __name__ == "__main__":
     # scenario 1
     france = Country("France")
@@ -24,3 +38,8 @@ if __name__ == "__main__":
     france.add_neighbor(espagne)
     canada.add_neighbor(etats_unis)
     print("Frontieres:", france.neighbors, canada.neighbors)
+
+    # scenario 2
+    triangle = Polygon([Point(0, 0), Point(1, 0), Point(0, 1)])
+    triangle.add_point(Point(1, 1))
+    print("Points du polygone:", triangle.points)
