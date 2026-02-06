@@ -59,6 +59,35 @@ class MediaLibrary:
         self.collection.append(media)
 
 
+# scenario 4 : reparations, competences, mecaniciens
+@dataclass(frozen=True)
+class Skill:
+    label: str
+
+
+@dataclass
+class Mechanic:
+    name: str
+    skills: Set[Skill]
+
+    def can_handle(self, required: Set[Skill]) -> bool:
+        return required.issubset(self.skills)
+
+
+@dataclass
+class Client:
+    name: str
+
+
+@dataclass
+class Repair:
+    client: Client
+    mechanic: Mechanic
+    required_skills: Set[Skill]
+
+    def is_assignable(self) -> bool:
+        return self.mechanic.can_handle(self.required_skills)
+
 if __name__ == "__main__":
     # scenario 1
     france = Country("France")
@@ -84,3 +113,11 @@ if __name__ == "__main__":
     media_lib.register(abonne)
     abonne.borrow(livre)
     print("Emprunts d'Alice:", [m.title for m in abonne.borrowed])
+
+    # scenario 4
+    skill_diag = Skill("diagnostic")
+    skill_elec = Skill("electricite")
+    mecanicien = Mechanic("Marc", {skill_diag, skill_elec})
+    client = Client("Dupont")
+    reparation = Repair(client, mecanicien, {skill_diag})
+    print("Reparation assignable:", reparation.is_assignable())
