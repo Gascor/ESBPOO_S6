@@ -88,6 +88,46 @@ class Repair:
     def is_assignable(self) -> bool:
         return self.mechanic.can_handle(self.required_skills)
 
+
+# scenario 5 : galerie d'art
+@dataclass(frozen=True)
+class Theme:
+    label: str
+
+
+@dataclass
+class Creator:
+    name: str
+
+
+@dataclass
+class Artwork:
+    title: str
+    creator: Creator
+    theme: Theme
+
+
+@dataclass
+class ArtClient:
+    name: str
+    purchases: List[Artwork] = field(default_factory=list)
+
+    def buy(self, artwork: Artwork) -> None:
+        self.purchases.append(artwork)
+
+
+@dataclass
+class Gallery:
+    name: str
+    artworks: List[Artwork] = field(default_factory=list)
+    clients: List[ArtClient] = field(default_factory=list)
+
+    def add_artwork(self, artwork: Artwork) -> None:
+        self.artworks.append(artwork)
+
+    def welcome_client(self, client: ArtClient) -> None:
+        self.clients.append(client)
+
 if __name__ == "__main__":
     # scenario 1
     france = Country("France")
@@ -121,3 +161,14 @@ if __name__ == "__main__":
     client = Client("Dupont")
     reparation = Repair(client, mecanicien, {skill_diag})
     print("Reparation assignable:", reparation.is_assignable())
+
+    # scenario 5
+    theme_modern = Theme("moderne")
+    artiste = Creator("Rivera")
+    oeuvre = Artwork("Murale", artiste, theme_modern)
+    galerie = Gallery("Galerie Centrale")
+    galerie.add_artwork(oeuvre)
+    acheteur = ArtClient("Bob")
+    galerie.welcome_client(acheteur)
+    acheteur.buy(oeuvre)
+    print("Ventes de Bob:", [a.title for a in acheteur.purchases])
